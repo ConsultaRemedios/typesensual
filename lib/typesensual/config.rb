@@ -2,7 +2,7 @@
 
 class Typesensual
   class Config
-    attr_writer :env, :client, :nodes, :api_key
+    attr_writer :env, :client, :nodes, :api_key, :connection_timeout_seconds
 
     def initialize(&block)
       yield self if block
@@ -27,10 +27,14 @@ class Typesensual
       @api_key ||= ENV.fetch('TYPESENSUAL_API_KEY', nil)
     end
 
+    def connection_timeout_seconds
+      @connection_timeout_seconds ||= ENV.fetch('TYPESENSUAL_CONNECTION_TIMEOUT_SECONDS', 1800)
+    end
+
     private
 
     def connection_options
-      { nodes: nodes, api_key: api_key }
+      { nodes: nodes, api_key: api_key, connection_timeout_seconds: connection_timeout_seconds}
     end
   end
 end

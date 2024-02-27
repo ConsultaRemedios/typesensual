@@ -160,4 +160,31 @@ RSpec.describe Typesensual::Config do
       end
     end
   end
+
+  describe '#connection_timeout_seconds' do
+    context 'with a TYPESENSUAL_CONNECTION_TIMEOUT_SECONDS env var' do
+      before do
+        allow(ENV)
+          .to receive(:fetch)
+          .with('TYPESENSUAL_CONNECTION_TIMEOUT_SECONDS', nil)
+          .and_return(60)
+      end
+
+      it 'uses the env var' do
+        config = described_class.new
+
+        expect(config.connection_timeout_seconds).to eq(60)
+      end
+
+      context 'when an explicit connection_timeout_seconds is provided' do
+        it 'uses the explicit connection_timeout_seconds and ignores the env var' do
+          config = described_class.new do |c|
+            c.connection_timeout_seconds = 120
+          end
+
+          expect(config.connection_timeout_seconds).to eq(120)
+        end
+      end
+    end
+  end
 end
